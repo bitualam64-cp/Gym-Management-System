@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Your Daily Diet Plan</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to right, #f2fcfe, #1c92d2);
+      margin: 0;
+      padding: 2rem;
+    }
+
+    .plan-container {
+      max-width: 700px;
+      margin: auto;
+      background-color: #fff;
+      border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+      padding: 2rem;
+    }
+
+    h2, h3 {
+      text-align: center;
+      color: #1c92d2;
+    }
+
+    .day-section {
+      margin-top: 2rem;
+      padding: 1rem;
+      background-color: #f9f9f9;
+      border-radius: 8px;
+      border: 1px solid #e3e3e3;
+    }
+
+    .day-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #333;
+    }
+
+    ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    li {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+      font-size: 0.95rem;
+      color: #555;
+    }
+
+    li:last-child {
+      border-bottom: none;
+    }
+
+    @media (max-width: 768px) {
+      .plan-container {
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="plan-container">
+    <h2 id="userName"></h2>
+    <h3>Your Weekly Diet Plan</h3>
+    <div id="dietWeek"></div>
+  </div>
+
+  <script>
+    const username = localStorage.getItem("username") || "User";
+
+    // Static day-wise diet plan
+    const weeklyDiet = {
+      Monday: {
+        Breakfast: "Oatmeal with fruits",
+        Lunch: "Grilled chicken with quinoa",
+        Dinner: "Vegetable soup with salad"
+      },
+      Tuesday: {
+        Breakfast: "Egg white omelette with toast",
+        Lunch: "Brown rice with mixed veggies",
+        Dinner: "Grilled fish with sautéed spinach"
+      },
+      Wednesday: {
+        Breakfast: "Smoothie with banana & peanut butter",
+        Lunch: "Paneer wrap with veggies",
+        Dinner: "Boiled lentils and chapati"
+      },
+      Thursday: {
+        Breakfast: "Idli with sambhar",
+        Lunch: "Chicken curry with brown rice",
+        Dinner: "Mixed veg soup with roti"
+      },
+      Friday: {
+        Breakfast: "Poha with peanuts",
+        Lunch: "Chickpea salad with multigrain bread",
+        Dinner: "Stuffed paratha with curd"
+      },
+      Saturday: {
+        Breakfast: "Upma with coconut chutney",
+        Lunch: "Fish curry with rice",
+        Dinner: "Vegetable khichdi"
+      },
+      Sunday: {
+        Breakfast: "Pancakes with honey",
+        Lunch: "Biryani with raita",
+        Dinner: "Light soup and fruit salad"
+      }
+    };
+
+    document.getElementById("userName").textContent = `Welcome, ${username}`;
+
+    const dietWeekDiv = document.getElementById("dietWeek");
+
+    for (const [day, meals] of Object.entries(weeklyDiet)) {
+      const section = document.createElement("div");
+      section.className = "day-section";
+
+      const dayTitle = document.createElement("div");
+      dayTitle.className = "day-title";
+      dayTitle.textContent = day;
+      section.appendChild(dayTitle);
+
+      const ul = document.createElement("ul");
+      for (const [meal, item] of Object.entries(meals)) {
+        const li = document.createElement("li");
+        li.textContent = `${meal}: ${item}`;
+        ul.appendChild(li);
+      }
+
+      section.appendChild(ul);
+      dietWeekDiv.appendChild(section);
+    }
+  </script>
+</body>
+</html>

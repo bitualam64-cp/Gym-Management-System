@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gym Admin Panel</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .sidebar {
+      width: 220px;
+      background-color: #333;
+      color: #fff;
+      padding: 20px;
+    }
+
+    .sidebar h2 {
+      margin-bottom: 30px;
+      font-size: 24px;
+      text-align: center;
+    }
+
+    .nav-link {
+      display: block;
+      color: #aa7e7e;
+      text-decoration: none;
+      margin-bottom: 15px;
+      padding: 10px;
+      border-radius: 6px;
+      transition: background 0.3s;
+    }
+
+    .nav-link:hover {
+      background-color: #555;
+    }
+
+    .main-content {
+      flex-grow: 1;
+      background-color: #f4f4f4;
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <h2>Admin Panel</h2>
+    <a href="addmember.html" class="nav-link" target="mainFrame">Add Member</a>
+    <a href="viewmembers.html" class="nav-link" target="mainFrame">View Members</a>
+    <!-- 🔽 Ensure the file name here matches EXACTLY the saved file -->
+    <a href="update.html" class="nav-link" target="mainFrame">Update/Delete</a>
+  </div>
+
+  <div class="main-content">
+    <iframe name="mainFrame" src="addmember.html"></iframe>
+  </div>
+</body>
+</html>

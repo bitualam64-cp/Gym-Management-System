@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>User Login</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #98b6d3;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .login-container {
+      background-color: #76a4a0;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+    .login-container h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #333;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-bottom: 6px;
+      color: #555;
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #4CAF50;
+      border: none;
+      color: white;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .error {
+      color: red;
+      text-align: center;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-container">
+    <h2>User Login</h2>
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="name">Name</label>
+        <input type="text" id="name" placeholder="Enter your name" required />
+      </div>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" placeholder="Enter your email" required />
+      </div>
+      <button type="submit">Login</button>
+      <p class="error" id="error-msg"></p>
+    </form>
+  </div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBAXUqeubh4p-bRwwdFA0qK_d20Ppe7v1g",
+    authDomain: "gym-management-system-302a3.firebaseapp.com",
+    projectId: "gym-management-system-302a3",
+    storageBucket: "gym-management-system-302a3.appspot.com",
+    messagingSenderId: "42006747556",
+    appId: "1:42006747556:web:f45e6b2894e65059540931",
+    measurementId: "G-K3ZJZQ1CT1",
+    databaseURL: "https://gym-management-system-302a3-default-rtdb.firebaseio.com"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  document.getElementById("loginForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const nameInput = document.getElementById("name").value.trim().toLowerCase();
+    const emailInput = document.getElementById("email").value.trim().toLowerCase();
+    const errorMsg = document.getElementById("error-msg");
+
+    try {
+      const snapshot = await get(child(ref(db), "members"));
+      if (snapshot.exists()) {
+        let matched = false;
+
+        snapshot.forEach(childSnapshot => {
+          const member = childSnapshot.val();
+          const fullName = member.fullName ? member.fullName.toLowerCase() : '';
+          const email = member.email ? member.email.toLowerCase() : '';
+
+          if (fullName === nameInput && email === emailInput) {
+            matched = true;
+
+            // Store user's name
+            localStorage.setItem("username", member.fullName);
+
+            // Random calorie-based diet plans
+            const dietPlans = [
+              {
+                level: "low",
+                items: {
+                  breakfast: "Oats with fruits and black coffee",
+                  lunch: "Grilled chicken salad",
+                  dinner: "Vegetable soup with multigrain bread"
+                }
+              },
+              {
+                level: "medium",
+                items: {
+                  breakfast: "Egg toast with juice",
+                  lunch: "Brown rice, dal, vegetables",
+                  dinner: "Grilled paneer with stir-fry veggies"
+                }
+              },
+              {
+                level: "high",
+                items: {
+                  breakfast: "Banana smoothie with peanut butter toast",
+                  lunch: "Chicken biryani with curd",
+                  dinner: "Fish curry with rice and salad"
+                }
+              }
+            ];
+
+            // Choose one randomly
+            const selectedPlan = dietPlans[Math.floor(Math.random() * dietPlans.length)];
+            localStorage.setItem("dietPlan", JSON.stringify(selectedPlan.items));
+            localStorage.setItem("calorieLevel", selectedPlan.level);
+
+            // Redirect
+            window.location.href = "dietplans.html";
+          }
+        });
+
+        if (!matched) {
+          errorMsg.textContent = "Invalid name or email.";
+        }
+
+      } else {
+        errorMsg.textContent = "No members found.";
+      }
+
+    } catch (err) {
+      console.error(err);
+      errorMsg.textContent = "Something went wrong. Please try again.";
+    }
+  });
+</script>
+
+</body>
+</html>

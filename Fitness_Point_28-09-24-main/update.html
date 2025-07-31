@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Update/Delete Member</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #eef2f3;
+      padding: 20px;
+    }
+
+    h2 {
+      text-align: center;
+    }
+
+    form, .search-box {
+      background-color: white;
+      padding: 20px;
+      max-width: 500px;
+      margin: 20px auto;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    label {
+      display: block;
+      margin: 10px 0 5px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      padding: 10px 15px;
+      border: none;
+      background-color: #007bff;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .success {
+      text-align: center;
+      color: green;
+      font-weight: bold;
+    }
+
+    .error {
+      text-align: center;
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <h2>Update or Delete Member</h2>
+
+  <div class="search-box">
+    <label for="searchEmail">Enter Member Email:</label>
+    <input type="email" id="searchEmail" placeholder="Enter email to search" required />
+    <button onclick="searchMember()">Search</button>
+    <p id="message"></p>
+  </div>
+
+  <form id="updateForm" class="hidden">
+    <label for="name">Full Name</label>
+    <input type="text" id="name" required />
+
+    <label for="phone">Phone Number</label>
+    <input type="tel" id="phone" required />
+
+    <label for="package">Membership Package</label>
+    <select id="package" required>
+      <option value="basic">Basic</option>
+      <option value="premium">Premium</option>
+      <option value="pro">Pro</option>
+    </select>
+
+    <button type="button" onclick="updateMember()">Update Member</button>
+    <button type="button" onclick="deleteMember()" style="background-color: red; margin-left: 10px;">Delete Member</button>
+  </form>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getDatabase, ref, get, update, remove, child } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBAXUqeubh4p-bRwwdFA0qK_d20Ppe7v1g",
+      authDomain: "gym-management-system-302a3.firebaseapp.com",
+      projectId: "gym-management-system-302a3",
+      storageBucket: "gym-management-system-302a3.firebasestorage.app",
+      messagingSenderId: "42006747556",
+      appId: "1:42006747556:web:f45e6b2894e65059540931",
+      measurementId: "G-K3ZJZQ1CT1"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase();
+
+    let currentKey = null;
+
+    window.searchMember = async function () {
+      const email = document.getElementById("searchEmail").value.trim();
+      const message = document.getElementById("message");
+      const updateForm = document.getElementById("updateForm");
+      updateForm.classList.add("hidden");
+      message.innerText = "Searching...";
+      currentKey = null;
+
+      try {
+        const snapshot = await get(ref(db, "members/"));
+        let found = false;
+
+        snapshot.forEach((childSnapshot) => {
+          const data = childSnapshot.val();
+          if (data.email === email) {
+            currentKey = childSnapshot.key;
+            document.getElementById("name").value = data.name;
+            document.getElementById("phone").value = data.phone;
+            document.getElementById("package").value = data.package;
+            updateForm.classList.remove("hidden");
+            message.innerText = "";
+            found = true;
+          }
+        });
+
+        if (!found) {
+          message.innerText = "No member found with that email.";
+        }
+      } catch (error) {
+        console.error(error);
+        message.innerText = "Error fetching member.";
+      }
+    };
+
+    window.updateMember = async function () {
+      if (!currentKey) return alert("No member selected.");
+
+      const newData = {
+        name: document.getElementById("name").value,
+        phone: document.getElementById("phone").value,
+        package: document.getElementById("package").value,
+      };
+
+      try {
+        await update(ref(db, "members/" + currentKey), newData);
+        alert("Member updated successfully.");
+      } catch (err) {
+        alert("Error updating member.");
+        console.error(err);
+      }
+    };
+
+    window.deleteMember = async function () {
+      if (!currentKey) return alert("No member selected.");
+
+      const confirmDelete = confirm("Are you sure you want to delete this member?");
+      if (!confirmDelete) return;
+
+      try {
+        await remove(ref(db, "members/" + currentKey));
+        alert("Member deleted successfully.");
+        document.getElementById("updateForm").reset();
+        document.getElementById("updateForm").classList.add("hidden");
+        currentKey = null;
+      } catch (err) {
+        alert("Error deleting member.");
+        console.error(err);
+      }
+    };
+  </script>
+</body>
+</html>

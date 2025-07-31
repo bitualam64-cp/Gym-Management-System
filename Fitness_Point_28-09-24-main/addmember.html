@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Add Member - Gym Management</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5eeff;
+      margin: 20px;
+    }
+
+    h2 {
+      text-align: center;
+    }
+
+    form {
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    #successMessage {
+      color: green;
+      text-align: center;
+      display: none;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Add New Member</h2>
+  <form id="addMemberForm">
+    <label for="fullName">Full Name</label>
+    <input type="text" id="fullName" required placeholder="Enter full name" />
+
+    <label for="email">Email Address</label>
+    <input type="email" id="email" required placeholder="Enter email" />
+
+    <label for="phone">Phone Number</label>
+    <input type="text" id="phone" required placeholder="Enter phone number" />
+
+    <label for="package">Membership Package</label>
+    <select id="package" required>
+      <option value="" disabled selected>Select package</option>
+      <option value="Monthly">Monthly</option>
+      <option value="Quarterly">Quarterly</option>
+      <option value="Yearly">Yearly</option>
+    </select>
+
+    <button type="submit">Add Member</button>
+  </form>
+
+  <div id="successMessage">✅ Member added successfully!</div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-database-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBAXUqeubh4p-bRwwdFA0qK_d20Ppe7v1g",
+      authDomain: "gym-management-system-302a3.firebaseapp.com",
+      databaseURL: "https://gym-management-system-302a3-default-rtdb.firebaseio.com",
+      projectId: "gym-management-system-302a3",
+      storageBucket: "gym-management-system-302a3.appspot.com",
+      messagingSenderId: "42006747556",
+      appId: "1:42006747556:web:f45e6b2894e65059540931",
+      measurementId: "G-K3ZJZQ1CT1"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const form = document.getElementById("addMemberForm");
+    const successMessage = document.getElementById("successMessage");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const fullName = document.getElementById("fullName").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const package = document.getElementById("package").value;
+      const joinedOn = new Date().toLocaleDateString();
+
+      await db.ref("members").push({
+        fullName,
+        email,
+        phone,
+        Package: package,
+        joinedOn
+      });
+
+      form.reset();
+      successMessage.style.display = "block";
+      setTimeout(() => (successMessage.style.display = "none"), 3000);
+    });
+  </script>
+</body>
+</html>

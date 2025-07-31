@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>View Members</title>
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+    th {
+      background-color: #f5f5f5;
+    }
+  </style>
+</head>
+<body>
+  <h1>View Members</h1>
+  <table id="membersTable">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Phone</th>
+        <th>Email</th>
+        <th>Package</th>
+        <th>Joining Date</th>
+      </tr>
+    </thead>
+    <tbody id="membersBody">
+      <!-- Members will be listed here -->
+    </tbody>
+  </table>
+
+  <!-- Firebase SDKs -->
+  <script type="module">
+    // Firebase imports
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyBAXUqeubh4p-bRwwdFA0qK_d20Ppe7v1g",
+      authDomain: "gym-management-system-302a3.firebaseapp.com",
+      projectId: "gym-management-system-302a3",
+      storageBucket: "gym-management-system-302a3.appspot.com",
+      messagingSenderId: "42006747556",
+      appId: "1:42006747556:web:f45e6b2894e65059540931",
+      measurementId: "G-K3ZJZQ1CT1"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    const membersRef = ref(db, "members");
+    const membersBody = document.getElementById("membersBody");
+
+    onValue(membersRef, (snapshot) => {
+      membersBody.innerHTML = ""; // Clear old data
+      snapshot.forEach((childSnapshot) => {
+        const member = childSnapshot.val();
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${childSnapshot.key}</td>
+          <td>${member.fullName || "-"}</td>
+          <td>${member.phone || "-"}</td>
+          <td>${member.email || "-"}</td>
+          <td>${member.Package || "-"}</td>
+          <td>${member.joinedOn || "-"}</td>
+        `;
+        membersBody.appendChild(row);
+      });
+    });
+  </script>
+</body>
+</html>
